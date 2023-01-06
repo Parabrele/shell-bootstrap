@@ -144,7 +144,7 @@ int execute(struct cmd *cmd)
 		if (pid == 0)
 		{
 			// This is the child process.
-			// Additionally, execvp() is preferred over other exec functions because it returns an error if the specified program is not found or if there is an error executing the program, making it easier to handle these cases.
+			// execvp() is preferred over other exec functions because it returns an error if the specified program is not found or if there is an error executing the program, making it easier to handle these cases.
 
 			execvp(cmd->args[0], cmd->args);
 
@@ -170,22 +170,6 @@ int execute(struct cmd *cmd)
 		}
 	}
 
-	/*A good answer to the question "What is the symbol for the sequence operator in bash? Give an example of a command where the sequence behaves differently vis-à-vis the and operator logic." would be:
-
-	The symbol for the sequence operator in bash is ";". An example of a command where the sequence operator behaves differently from the and operator is:
-
-	Copy code
-	true; echo "This command will execute" && echo "This command will not execute"
-	In this example, the "true" command will always execute and return a success status. Therefore, the first echo command will also execute. However, the and operator (&&) only executes the second command if the first one returns a success status. Since the "true" command returned a success status, the second echo command will not execute.
-
-	On the other hand, if we use the and operator instead of the sequence operator:
-
-	Copy code
-	false; echo "This command will not execute" && echo "This command will not execute"
-	Both echo commands will not execute because the "false" command returns a failure status, and the and operator does not execute the second command if the first one fails.*/
-
-	/*"&&" est paresseux, alors que ";" va tout executer.
-	cd dossier ; cat readme behaves differently if there is a && in stead of the ;.*/
 	case C_SEQ:
 	{
 		int exit_code = execute(cmd->left);
@@ -225,12 +209,7 @@ int execute(struct cmd *cmd)
 			return exit_code;
 		}
 	}
-	/*he role of parentheses in the command (cmd1 && cmd2 | cmd3 ...) 2>/dev/null is to group the commands together and to specify the order in which the commands should be executed. The parentheses are used to indicate that the commands inside the parentheses should be executed before the redirection 2>/dev/null.
-	An example of a command that uses these parentheses non-trivially is (cmd1 && cmd2) || (cmd3 && cmd4). This command first executes cmd1 and cmd2 if cmd1 succeeds, and then executes cmd3 and cmd4 if cmd3 succeeds. The output of these commands is then piped together.*/
-	/*(cmd1 | cmd2) && (cmd3 || (cmd4 && cmd5))
-	This command first pipes the output of cmd1 to the input of cmd2, and then executes cmd3 only if both cmd1 and cmd2 are successful. If cmd3 fails, it will execute cmd4 and cmd5 in sequence, and use the result of that sequence as the final result for the command.
-
-	The parentheses are used to group together multiple commands and specify the order in which they should be executed, as well as to override the default precedence of the logical operators (in this case, && and ||).*/
+	
 	case C_PIPE:
 	{
 		// Create a pipe
@@ -318,7 +297,6 @@ int execute(struct cmd *cmd)
 
 		return 0;
 	}
-		/*When you type CTRL+C in the shell, it sends the SIGINT signal to the current process, which usually terminates the process. To recover after typing CTRL+C, you can catch the SIGINT signal and define a custom behavior for it. For example, you can ignore the signal by calling the signal function and setting the signal handler to SIG_IGN, or you can define a custom signal handler function that performs certain actions before exiting.*/
 		errmsg("I do not know how to do this, please help me!");
 		return -1;
 	}
